@@ -1,0 +1,93 @@
+[Dataflow Programming]
+
+Dataflow Graphs: Describe how data flows between operations.
+
+Operators: The basic functional units of a dataflow application. They consume
+           data from inputs, perform a computation on it, and produce data on
+           outputs.
+
+Sources: Operators without input ports.
+
+Sinks: Operators without output ports.
+
+Logical Dataflow Graphs: Dataflow graphs that convey a high-level view of the
+                         computation logic. Nodes represent operators here.
+
+Physical Dataflow Graphs: A detailed representation of the tasks in the
+                          dataflow program. Each node is a task. To execute a
+                          dataflow program, the logical graph is converted to a
+                          physical one, which specifies in detail how the
+                          program is executed.
+
+Data Parallelism: Partition the input data and run tasks of the same operation
+                  over each data subset in parallel.
+
+Task Parallelism: Let tasks from an operator, or multiple operators, run in
+                  parallel on a piece of data. This parallel execution can work
+                  on the same piece of data or on different ones.
+
+Data Exchange Strategies:
+  Forward Strategy: Sends data from a task to a receiving task.
+  Broadcast Strategy: Sends each data item to all parallel tasks of an
+                      operator.
+  Key-Based Strategy: Partitions data by a key attribute and guarantees that
+                      data items with the same key are processed by the same
+                      task.
+  Random Strategy: Uniformly distributes data items to operator tasks.
+
+
+[Processing Streams in Parallel]
+
+Data stream: A potentially unbounded sequence of events.
+
+Latency: Time interval between receiving an event and seeing the effect of
+         processing this event in the output.
+
+Throughput: How many events the system can process per time unit.
+
+Peak throughput: The performance limit when your system is at its maximum load.
+
+Backpressure: A system operating in a scenario that is receiving more events
+              than the peak throughput can handle.
+
+Stateless operation: The processing of an event does not depend on any events
+                     seen in the past and no history is kept.
+
+Stateful operation: The processing of an event generates changes on the
+                    internal state of the processor, so each event interferes
+                    with the next ones, making them dependent.
+
+[[Operations on Data Streams]]
+
+Data ingestion: The operation of fetching raw data from external sources and
+                converting it into a format suitable for processing. Operators
+                that implement data ingestion logic are called data sources.
+
+Data egress: The operation of producing output in a form suitable for
+             consumptionby external systems. Operators that perform data egress
+             are called data sinks.
+
+Transformation: Single-pass operations that process each event independently.
+                These operations consume onde event after the other apply some
+                transformation to the event data, producing a new output
+                stream.
+
+Rolling aggregation: An aggregation, such as sum, minimum, and maximum, that is
+                     continuously updated for each input event.
+
+Window operations: Collect and buffer records to compute the result.
+                   Continuously create finite sets of events called buckets
+                   from an unbounded event stream and let us perform
+                   computations on these finite sets.
+  Tumbling window: Assign events into nonoverlapping buckets of fixed size.
+                   Count-based tumbling windows define how many events are
+                   collected; Time-based tumbling windows define a time
+                   interval during which events are buffered.
+  Sliding window:  Assign events into overlapping buckets of fixed size:
+                   count-based and time-based window are permited.
+  Session window: Sessions are comprised of a series of events happening in
+                  adjacent times followed by a period of inactivity. Session
+                  windows group events in sessions based on a session gap value
+                  that defines the time of inactivity to consider a session
+                  closed.
+
