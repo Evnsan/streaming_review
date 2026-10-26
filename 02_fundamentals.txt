@@ -91,3 +91,52 @@ Window operations: Collect and buffer records to compute the result.
                   that defines the time of inactivity to consider a session
                   closed.
 
+[[Time Semantics]]
+A streaming application can operate with two different notions of time:
+    processing time or event time.
+
+Processing time: The time of the local clock on the machine where the operator
+                 processing the stream is being executed.
+
+Event time: The time when an event in the stream actually happened. It is
+            based on a timestamp that is attached to the events of the stream.
+            Operations based on event time are predictable, and their results
+            are deterministic.
+
+Watermarks: A global progress metric that indicates the point in time when we
+            are confident that no more delayed events will arrive. When an
+            operator receives a watermark with time T, it can assume that no
+            further events with timestamp less than T will be received.
+
+[[State and Consistency Models]]
+Supporting stateful operators comes with a few implementation challenges:
+  State management: Handling states in the presence of concurrency
+  State partitioning: Results depend on both the state and incoming events, so
+                      you need to have the correct state partition on the
+                      operator handling the event.
+  State recovery: Recover states and get the correct result even in
+                  the presence of failures.
+
+Task Failures: A task is a processing step that (1) receives the event, storing
+               it in a local buffer; (2) possibly updates internal state; and
+               (3) produces an output record. Any of these steps can fail.
+
+Result guarantees: The consistency of the internal state of the stream
+                   processor.
+
+At-most-once: Do nothing to prevent failures. You can simply drop events and
+              nothing is done to ensure result correctness.
+
+At-least-once: Events should not get lost. All events will be processed, and
+               there is a chance that some of them are processed more than
+               once. To do so, you need to have a way to replay events.
+
+Exactly-once: There is no event loss, and updates on the internal state will be
+              applied exactly once for each event. Flink uses a lightweight
+              snapshotting mechanism to achieve exactly-once result guarantees.
+
+End-to-end-exactly-once: Beyond the internal state of the stream processor, you
+                         may need to know the guarantees of the whole pipeline.
+                         To do so you need to know the guarantees of the other
+                         components. In a real-world streaming application,
+                         there will be at least one source and one sink.
